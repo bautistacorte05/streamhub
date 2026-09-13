@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<!-- StreamHub download page. Deliberately single-theme (dark, cinema-in-a-
+dark-room mood) — every streaming service's own marketing (Netflix, Max,
+Disney+) commits to dark grounds for the same reason, and the app itself
+(src/index.css) is dark-only. Colors/type explicit throughout so it holds
+regardless of viewer host theme. Hosted via GitHub Pages (docs/), mirrors
+the published Artifact — see scratchpad/download-page.html for that copy. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StreamHub</title>
+<meta name="description" content="Descargá StreamHub: todas tus plataformas de streaming en una carpeta, más un buscador de en qué plataforma está cada película o serie.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --surface: #14161d;
+    --surface-2: #1b1e27;
+    --text: #f4f4f6;
+    --text-dim: #a7aab6;
+    --text-faint: #6d707c;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #7c5cff;
+    --accent-2: #ff7ab6;
+    --focus: #b6a6ff;
+
+    --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --body: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    padding: 0 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { max-width: 100%; }
+
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding-block: 56px 80px;
+  }
+
+  /* ---------- Wordmark ---------- */
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    padding-top: 64px;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    width: 640px;
+    height: 420px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 18px;
+  }
+
+  h1.headline {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(32px, 6vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    max-width: 15ch;
+  }
+
+  .subhead {
+    margin-top: 18px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    max-width: 46ch;
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-block {
+    margin-top: 34px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 16px;
+    color: #0b0d12;
+    background: linear-gradient(100deg, var(--accent-2), var(--accent));
+    padding: 15px 26px;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--accent) 60%, transparent);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  .cta:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .cta svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  .cta-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+  }
+
+  .cta-meta b { color: var(--text-dim); font-weight: 500; }
+
+  /* ---------- Mock folder preview ---------- */
+  .folder-preview {
+    margin-top: 52px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .folder-preview-label {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    padding-left: 2px;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+    gap: 10px;
+  }
+
+  .tile {
+    height: 68px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    background: linear-gradient(155deg, color-mix(in srgb, var(--tile) 55%, var(--surface-2)), var(--surface-2));
+    border: 1px solid var(--border);
+  }
+
+  /* ---------- Steps ---------- */
+  .section-title {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 24px;
+    margin-top: 88px;
+    margin-bottom: 8px;
+  }
+
+  .section-sub {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 50ch;
+  }
+
+  .steps {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 18px;
+    padding-block: 22px;
+    border-top: 1px solid var(--border);
+  }
+
+  .step:last-child { padding-bottom: 0; }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent-2);
+    padding-top: 2px;
+  }
+
+  .step h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .step p {
+    margin: 6px 0 0;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+
+  /* Stylized mock of the Windows SmartScreen dialog, for step 2 */
+  .smartscreen-mock {
+    margin-top: 14px;
+    width: min(320px, 100%);
+    background: #f4f4f6;
+    color: #1b1e27;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.5);
+    font-family: var(--body);
+  }
+
+  .smartscreen-mock .titlebar {
+    background: #0067c0;
+    color: white;
+    font-size: 11.5px;
+    padding: 6px 10px;
+  }
+
+  .smartscreen-mock .body {
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .smartscreen-mock .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: #ffc83d;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .smartscreen-mock strong { display: block; font-size: 13px; margin-bottom: 3px; }
+  .smartscreen-mock p { margin: 0; font-size: 12px; line-height: 1.4; color: #4b4e58; }
+  .smartscreen-mock .link { color: #0067c0; font-size: 12px; margin-top: 8px; display: inline-block; }
+
+  /* ---------- Features ---------- */
+  .features {
+    margin-top: 88px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .feature {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .feature:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .feature h3 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 19px;
+  }
+
+  .feature p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 88px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 2px; }
+
+  @media (max-width: 460px) {
+    .step { grid-template-columns: 24px 1fr; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="wordmark">StreamHub</div>
+
+  <div class="hero">
+    <div class="eyebrow">para Windows · v0.1.0</div>
+    <h1 class="headline">Todas tus plataformas, una sola carpeta.</h1>
+    <p class="subhead">
+      StreamHub junta los accesos a Netflix, Max, Disney+ y el resto en un
+      solo lugar — y cuando no te acordás dónde está esa película o serie,
+      la buscás una vez y te dice en qué plataforma verla.
+    </p>
+
+    <div class="cta-block">
+      <a class="cta" href="https://github.com/bautistacorte05/streamhub/releases/download/v0.1.0/StreamHub.Setup.0.1.0.exe" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M6 11l6 6 6-6"/><path d="M5 21h14"/></svg>
+        Descargar StreamHub
+      </a>
+      <div class="cta-meta"><b>Gratis</b> · no pide crear cuenta · ~110&nbsp;MB · Windows 10/11</div>
+    </div>
+
+    <div class="folder-preview">
+      <div class="folder-preview-label">así se ve tu carpeta</div>
+      <div class="tiles">
+        <div class="tile" style="--tile:#E50914">Netflix</div>
+        <div class="tile" style="--tile:#002BE7">Max</div>
+        <div class="tile" style="--tile:#00A8E1">Prime Video</div>
+        <div class="tile" style="--tile:#113CCF">Disney+</div>
+        <div class="tile" style="--tile:#F47521">Crunchyroll</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Instalarla lleva un minuto</h2>
+  <p class="section-sub">Cuatro pasos, ninguno técnico. Ni una cuenta que crear en el camino.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div>
+        <h3>Descargá el instalador</h3>
+        <p>Con el botón de arriba. El archivo cae a tu carpeta de Descargas.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div>
+        <h3>Windows va a avisar algo — es normal</h3>
+        <p>
+          Va a decir <em>"Windows protegió su PC"</em>. Pasa porque no se
+          pagó un certificado de editor (cuesta bastante y no tiene sentido
+          para una app gratis) — no significa que tenga nada raro.
+        </p>
+        <div class="smartscreen-mock">
+          <div class="titlebar">Windows protegió su PC</div>
+          <div class="body">
+            <div class="icon">🛡️</div>
+            <div>
+              <strong>Editor no reconocido</strong>
+              <p>Esta app podría poner en riesgo tu PC.</p>
+              <span class="link">Más información →</span>
+            </div>
+          </div>
+        </div>
+        <p>Tocá <strong>"Más información"</strong> y después <strong>"Ejecutar de todas formas"</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div>
+        <h3>Se instala sola</h3>
+        <p>Una barra de progreso y listo — no hay que tocar nada más ni elegir carpetas.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div>
+        <h3>Elegí tu país y tus apps</h3>
+        <p>Se abre sola al terminar y te pregunta dónde vivís y qué plataformas tenés. Con eso, ya está lista.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <h3>Tu carpeta</h3>
+      <p>Todas tus apps de streaming juntas — un click las abre, sin buscar cada ícono por separado.</p>
+    </div>
+    <div class="feature">
+      <h3>El buscador</h3>
+      <p>Escribís el nombre de una película o serie y te muestra en qué plataforma está disponible, lista para ver.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>Hecho por Bauti — gratis, sin vueltas.</span>
+    <a href="https://github.com/bautistacorte05/streamhub" target="_blank" rel="noopener">código</a>
+  </footer>
+</div>
+
+</body>
+</html>
