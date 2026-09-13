@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-electron
+release
+*.tsbuildinfo
+.claude/
+
+# Key de TMDB embebida en la app para distribucion (ver electron/embedded-key.example.ts).
+# No se sube: es la key dedicada de la cuenta de TMDB creada para StreamHub.
+electron/embedded-key.ts
