@@ -1,7 +1,7 @@
 {
   "name": "streamhub",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Carpeta unica para todas tus apps de streaming + buscador de en que plataforma esta cada titulo",
   "author": "bauti",
   "main": "dist-electron/main.js",

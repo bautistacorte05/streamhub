@@ -59,13 +59,21 @@ película/serie (usando la API de TMDB).
     plataforma (ej. netflix.com), lo que obligaba a buscar el título de
     nuevo ahí adentro. Se cambió `Platform.searchUrl(title)` en
     `src/data/platforms.ts` para armar la URL de búsqueda de ese título
-    específico en cada plataforma (Netflix, Max, Prime Video, Disney+,
-    Paramount+, Apple TV+, YouTube, Crunchyroll tienen patrón conocido;
-    Movistar Play y Flow no, así que esas caen a la home). **Límite real:
+    específico en cada plataforma (Netflix, Max, Prime Video, Paramount+,
+    Apple TV+, YouTube, Crunchyroll tienen patrón conocido; Movistar Play,
+    Flow y Disney+ no, así que esas caen a la home). **Límite real:
     ninguna plataforma expone un link público que abra "play" de un
     título puntual** (eso requiere partnership privado, ej. el que tiene
     JustWatch) — aterrizar en la búsqueda ya hecha es lo máximo posible
     sin eso.
+  - **Disney+ perdió su ruta pública de búsqueda (detectado 2026-09-14):**
+    `disneyplus.com/search?q=...` (y `/search` a secas) empezaron a
+    devolver 404 real — reportado por el usuario con captura (click en
+    "Disney Plus" desde el buscador de la app) y confirmado por fetch
+    directo. Se le sacó el `searchUrl` a Disney+ en
+    `src/data/platforms.ts`; ahora cae a la home como Movistar Play y
+    Flow. Si en el futuro Disney+ vuelve a exponer una ruta de búsqueda
+    pública y estable, se puede restaurar el patrón.
 
 ## Features implementadas
 
@@ -214,3 +222,10 @@ npm run dist     # genera el instalador .exe (electron-builder) en /release
   tocar el config real del usuario) para capturar screenshots del wizard
   y de Ajustes — build y lint (`npm run build`, `npm run lint`) pasan
   limpios.
+- **2026-09-14**: reportado por el usuario (captura de pantalla) que
+  clickear "Disney Plus" desde el buscador llevaba a un 404 real de
+  Disney+. Arreglado (ver "Disney+ perdió su ruta pública de búsqueda" en
+  Decisiones tomadas). Pendiente: sacar un release nuevo (`npm run dist`)
+  y actualizar el link/versión en la landing page (`docs/index.html`,
+  `scratchpad/download-page.html`, Artifact publicado) — quien ya se
+  instaló la v0.1.0 sigue con el bug hasta que actualice.

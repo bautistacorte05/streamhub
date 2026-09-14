@@ -50,7 +50,9 @@ export const DEFAULT_PLATFORMS: Platform[] = [
     url: 'https://www.disneyplus.com',
     color: '#113CCF',
     matchKeywords: ['disney'],
-    searchUrl: (title) => `https://www.disneyplus.com/search?q=${encodeURIComponent(title)}`,
+    // Disney+ saco su ruta publica de busqueda (2026-09-14: /search?q= y
+    // /search a secas devuelven 404 real, verificado con fetch y en el
+    // navegador) -> cae a la home, igual que Movistar Play y Flow.
   },
   {
     id: 'paramount-plus',
