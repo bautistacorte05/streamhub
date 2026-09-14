@@ -1,5 +1,8 @@
 import { readConfig } from './config'
 import { EMBEDDED_TMDB_API_KEY } from './embedded-key'
+import type { MediaType, SearchResult, Provider, Providers } from './shared-types'
+
+export type { MediaType, SearchResult, Provider, Providers } from './shared-types'
 
 const TMDB_BASE = 'https://api.themoviedb.org/3'
 
@@ -26,30 +29,6 @@ const LANGUAGE_BY_REGION: Record<string, string> = {
 
 function languageForRegion(region: string): string {
   return LANGUAGE_BY_REGION[region.toUpperCase()] ?? 'es-419'
-}
-
-export type MediaType = 'movie' | 'tv'
-
-export interface SearchResult {
-  id: number
-  mediaType: MediaType
-  title: string
-  year: string
-  posterPath: string | null
-  overview: string
-}
-
-export interface Provider {
-  id: number
-  name: string
-  logoPath: string | null
-}
-
-export interface Providers {
-  flatrate: Provider[]
-  rent: Provider[]
-  buy: Provider[]
-  link: string | null
 }
 
 // Errores identificados por `message` (no por una subclase / campo custom):

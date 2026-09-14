@@ -4,6 +4,7 @@ dist-electron
 release
 *.tsbuildinfo
 .claude/
+scratchpad/
 
 # Key de TMDB embebida en la app para distribucion (ver electron/embedded-key.example.ts).
 # No se sube: es la key dedicada de la cuenta de TMDB creada para StreamHub.

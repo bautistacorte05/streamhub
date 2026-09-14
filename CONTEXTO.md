@@ -360,3 +360,42 @@ npm run release  # genera el instalador Y lo publica en GitHub Releases
     "Features implementadas" para el detalle. Verificado: `npm run
     build` y `npm run lint` limpios. **Sin pushear** — queda pendiente
     de confirmación del usuario (ver regla de arriba).
+  - **~15:50 a 16:00** — pedido explícito del usuario: revisión de todo
+    el código "como un senior de 10 años", antes de pushear nada, para
+    que quede prolijo. Encontrado y arreglado:
+    - **Tipos duplicados a mano** entre `electron/*.ts` y
+      `src/types.ts` (`Config`, `SearchResult`, `Provider`, etc.) —
+      dos fuentes de verdad que había que recordar mantener
+      sincronizadas. Se movieron a `electron/shared-types.ts` (solo
+      `interface`/`type`, cero dependencias de Node/Electron) y ambos
+      lados reexportan desde ahí. Verificado con build completo que un
+      `import type` se borra al compilar y no filtra código de
+      `electron/` al bundle del renderer (`dist/assets/*.js` no
+      contiene `shared-types`).
+    - **Bug real en `ProviderBadges.tsx`**: el mensaje de "no
+      encontramos X en streaming" decía **"en Argentina" hardcodeado**
+      sin importar la región real configurada — quedó de antes del
+      soporte multi-región (2026-09-11), nunca se actualizó ese string
+      puntual. Ahora usa la región de `Config` (enhebrada
+      `App.tsx` → `SearchView.tsx` → `ProviderBadges.tsx`) y muestra el
+      label correcto de `REGIONS`.
+    - **Posible doble-inicialización de `electron-updater`**: si
+      `createWindow()` se llamara dos veces (ej. `app.on('activate')`),
+      `initUpdater()` agregaría los listeners y timers de chequeo dos
+      veces sobre el mismo `autoUpdater` (es un singleton del modulo).
+      No pasa hoy en la práctica (la app abre una sola ventana), pero
+      se agregó un guard (`initialized`) porque no cuesta nada.
+    - **Comentarios y textos desactualizados** que quedaron mencionando
+      features ya sacadas hoy mismo (API key propia, agregar apps
+      custom): `electron/embedded-key.example.ts`,
+      `src/components/OnboardingWizard.tsx` (dos lugares),
+      `src/data/platforms.ts`, `README.md`.
+    - `scratchpad/` sumado a `.gitignore` (es carpeta de trabajo
+      temporal, no debería poder colarse en un commit).
+    - Confirmado que `docs/index.html` y `scratchpad/download-page.html`
+      (el mirror del Artifact) no se habían desincronizado en todos los
+      cambios de la landing de hoy (diff a mano, solo difieren en el
+      wrapper HTML que agrega el Artifact).
+    - Verificado: `npm run build` y `npm run lint` limpios, sin `any` en
+      todo el código, sin `console.log`/TODOs olvidados. **Sin
+      pushear** — commiteado local nomás, pendiente de confirmación.

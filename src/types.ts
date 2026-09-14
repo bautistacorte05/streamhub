@@ -1,47 +1,26 @@
-export interface CustomApp {
-  id: string
-  name: string
-  url: string
-}
+// Reexporta los tipos "de datos" desde electron/shared-types.ts -- una
+// sola fuente de verdad para la forma de Config, SearchResult, etc. en vez
+// de mantener dos copias a mano en electron/ y en src/ (ver el comentario
+// al principio de shared-types.ts). Esto es seguro porque son puros tipos
+// (cero runtime): un `import type` se borra por completo al compilar, asi
+// que src/ sigue sin depender en los hechos de nada de electron/.
+export type {
+  CustomApp,
+  Config,
+  MediaType,
+  UpdateStatus,
+  SearchResult,
+  Provider,
+  Providers,
+} from '../electron/shared-types'
 
-export interface Config {
-  tmdbApiKey: string
-  region: string
-  myApps: CustomApp[]
-  disabledPlatformIds: string[]
-  onboardingComplete: boolean
-}
-
-export type MediaType = 'movie' | 'tv'
-
-export type UpdateStatus =
-  | { state: 'checking' }
-  | { state: 'available'; version: string }
-  | { state: 'not-available' }
-  | { state: 'downloaded'; version: string }
-  | { state: 'error'; message: string }
-
-export interface SearchResult {
-  id: number
-  mediaType: MediaType
-  title: string
-  year: string
-  posterPath: string | null
-  overview: string
-}
-
-export interface Provider {
-  id: number
-  name: string
-  logoPath: string | null
-}
-
-export interface Providers {
-  flatrate: Provider[]
-  rent: Provider[]
-  buy: Provider[]
-  link: string | null
-}
+import type {
+  Config,
+  MediaType,
+  UpdateStatus,
+  SearchResult,
+  Providers,
+} from '../electron/shared-types'
 
 export interface Api {
   config: {

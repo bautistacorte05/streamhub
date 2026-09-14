@@ -1,25 +1,9 @@
 import { app } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
+import type { Config } from './shared-types'
 
-export interface CustomApp {
-  id: string
-  name: string
-  url: string
-}
-
-export interface Config {
-  tmdbApiKey: string
-  region: string
-  myApps: CustomApp[]
-  // Ids de DEFAULT_PLATFORMS (src/data/platforms.ts) que el usuario no
-  // tiene y no quiere ver en "Mis apps". Vacio = se muestran todas (asi
-  // instalaciones viejas, sin este campo, no pierden ninguna).
-  disabledPlatformIds: string[]
-  // Si ya completo (o salteo) el wizard de bienvenida. Ver migracion en
-  // readConfig() para instalaciones previas a que existiera el wizard.
-  onboardingComplete: boolean
-}
+export type { CustomApp, Config } from './shared-types'
 
 const DEFAULT_CONFIG: Config = {
   tmdbApiKey: '',

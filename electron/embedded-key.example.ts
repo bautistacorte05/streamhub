@@ -3,7 +3,9 @@
 // dedicada a StreamHub (NO la key personal de otra app) — ver CONTEXTO.md,
 // seccion "Key de TMDB embebida", para el por que.
 //
-// Si "embedded-key.ts" no existe o queda con el string vacio, la app sigue
-// funcionando igual: cada usuario puede cargar su propia key desde Ajustes
-// (Config.tmdbApiKey tiene prioridad sobre esta, ver electron/tmdb.ts).
+// Es la UNICA key que usa la app (electron/tmdb.ts ya no acepta una key
+// cargada por el usuario, ver CONTEXTO.md). Si "embedded-key.ts" no existe
+// o queda con el string vacio, el buscador tira MISSING_API_KEY -- hace
+// falta esta key para poder compilar/correr StreamHub con el buscador
+// funcionando.
 export const EMBEDDED_TMDB_API_KEY = ''

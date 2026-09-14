@@ -14,8 +14,8 @@ type Step = 'region' | 'platforms'
 // en electron/config.ts readConfig()). El objetivo es que alguien que nunca
 // vio la app pueda dejarla lista en 2 pasos, sin tener que entender que es
 // una API key ni crearse una cuenta en ningun lado — la busqueda de TMDB
-// funciona de una con la key embebida (ver electron/embedded-key.ts);
-// cargar una propia queda como opcion en Ajustes para quien la quiera.
+// funciona de una con la key embebida (ver electron/embedded-key.ts) y es
+// la unica que usa la app (ver electron/tmdb.ts).
 export default function OnboardingWizard({ config, onComplete }: Props) {
   const [step, setStep] = useState<Step>('region')
   const [region, setRegion] = useState(config.region || 'AR')
@@ -91,10 +91,7 @@ export default function OnboardingWizard({ config, onComplete }: Props) {
         {step === 'platforms' ? (
           <section>
             <h2>¿Qué plataformas tenés?</h2>
-            <p className="modal-hint">
-              Destildá las que no uses. Podés cambiar esto (o agregar otras) después desde
-              Ajustes.
-            </p>
+            <p className="modal-hint">Destildá las que no uses. Podés cambiar esto después desde Ajustes.</p>
             <div className="onboarding-platform-grid">
               {DEFAULT_PLATFORMS.map((p) => (
                 <label

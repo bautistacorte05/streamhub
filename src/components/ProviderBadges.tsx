@@ -1,4 +1,5 @@
 import { findPlatformByProviderName } from '../data/platforms'
+import { REGIONS } from '../data/regions'
 import type { CustomApp, Provider } from '../types'
 
 interface Props {
@@ -6,16 +7,25 @@ interface Props {
   providers: Provider[]
   fallbackLink: string | null
   myApps: CustomApp[]
+  region: string
   onOpen: (url: string) => void
 }
 
 const TMDB_LOGO_BASE = 'https://image.tmdb.org/t/p/w92'
 
-export default function ProviderBadges({ title, providers, fallbackLink, myApps, onOpen }: Props) {
+export default function ProviderBadges({
+  title,
+  providers,
+  fallbackLink,
+  myApps,
+  region,
+  onOpen,
+}: Props) {
   if (providers.length === 0) {
+    const regionLabel = REGIONS.find((r) => r.code === region)?.label ?? region
     return (
       <p className="providers-empty">
-        No encontramos "{title}" en streaming por suscripcion en Argentina ahora mismo
+        No encontramos "{title}" en streaming por suscripcion en {regionLabel} ahora mismo
         {fallbackLink ? (
           <>
             {' '}

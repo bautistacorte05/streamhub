@@ -65,7 +65,7 @@ export default function App() {
             onOpenSettings={() => setSettingsOpen(true)}
           />
         ) : (
-          <SearchView myApps={config.myApps} onOpen={openExternal} />
+          <SearchView myApps={config.myApps} region={config.region} onOpen={openExternal} />
         )}
       </main>
 

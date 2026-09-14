@@ -1,5 +1,8 @@
 import { autoUpdater } from 'electron-updater'
 import type { BrowserWindow } from 'electron'
+import type { UpdateStatus } from './shared-types'
+
+export type { UpdateStatus } from './shared-types'
 
 // Auto-update via electron-updater, apuntando al feed de GitHub Releases
 // (ver "publish" en package.json). Descarga en segundo plano apenas hay
@@ -15,14 +18,16 @@ import type { BrowserWindow } from 'electron'
 autoUpdater.autoDownload = true
 autoUpdater.autoInstallOnAppQuit = true
 
-export type UpdateStatus =
-  | { state: 'checking' }
-  | { state: 'available'; version: string }
-  | { state: 'not-available' }
-  | { state: 'downloaded'; version: string }
-  | { state: 'error'; message: string }
+// autoUpdater es un singleton del modulo electron-updater -- si initUpdater
+// se llamara dos veces (ej. createWindow() de nuevo por app.on('activate'))
+// se duplicarian los listeners y los timers de chequeo. No deberia pasar
+// hoy (esta app abre una sola ventana), pero el guard sale gratis.
+let initialized = false
 
 export function initUpdater(win: BrowserWindow) {
+  if (initialized) return
+  initialized = true
+
   const send = (status: UpdateStatus) => {
     if (!win.isDestroyed()) win.webContents.send('updater:status', status)
   }

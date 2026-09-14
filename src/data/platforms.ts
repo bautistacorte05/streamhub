@@ -16,8 +16,10 @@ export interface Platform {
   searchUrl?: (title: string) => string
 }
 
-// Set inicial pensado para Argentina. El usuario puede agregar mas desde
-// Ajustes (se guardan en config.myApps); estos son fijos en el codigo.
+// Set inicial pensado para Argentina, pero funcional en cualquier region de
+// REGIONS (src/data/regions.ts). Lista fija en el codigo -- se suma una
+// plataforma nueva aca cuando hay demanda real de ella (ver CONTEXTO.md),
+// no hay forma de que el usuario agregue una propia desde la UI.
 export const DEFAULT_PLATFORMS: Platform[] = [
   {
     id: 'netflix',

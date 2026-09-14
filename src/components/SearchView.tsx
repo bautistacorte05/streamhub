@@ -6,10 +6,11 @@ const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w154'
 
 interface Props {
   myApps: CustomApp[]
+  region: string
   onOpen: (url: string) => void
 }
 
-export default function SearchView({ myApps, onOpen }: Props) {
+export default function SearchView({ myApps, region, onOpen }: Props) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [selected, setSelected] = useState<SearchResult | null>(null)
@@ -101,6 +102,7 @@ export default function SearchView({ myApps, onOpen }: Props) {
                 providers={providers.flatrate}
                 fallbackLink={providers.link}
                 myApps={myApps}
+                region={region}
                 onOpen={onOpen}
               />
             ) : null}
