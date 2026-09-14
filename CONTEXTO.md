@@ -399,3 +399,15 @@ npm run release  # genera el instalador Y lo publica en GitHub Releases
     - Verificado: `npm run build` y `npm run lint` limpios, sin `any` en
       todo el código, sin `console.log`/TODOs olvidados. **Sin
       pushear** — commiteado local nomás, pendiente de confirmación.
+  - **16:05** — el usuario confirmó: "pushealo y vemos si funciona el
+    auto-update". Pusheados `24dc09d` y `7524445` a `main`. Para probar
+    el auto-update de verdad hacía falta una version mas nueva que la
+    v0.1.2 ya publicada (que es la que trae el codigo de
+    electron-updater) — se bumpeo a **v0.1.3** (settings sin API key
+    propia ni agregar apps, fix del bug de "en Argentina" hardcodeado,
+    dedupe de tipos) y se publico con `npm run release`. El build viejo
+    sin instalar en `release/win-unpacked/` (de cuando se publico
+    v0.1.2, intacto desde entonces) se uso como "usuario que ya tenia
+    v0.1.2" para probar que detecta y baja la v0.1.3 sola. Resultado de
+    la prueba: ver mas abajo en esta misma entrada — se completa
+    despues de correrla.
