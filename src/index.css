@@ -409,30 +409,6 @@ img {
   margin: 0 0 12px;
 }
 
-.settings-form {
-  display: flex;
-  gap: 8px;
-}
-
-.settings-form-add {
-  flex-wrap: wrap;
-}
-
-.settings-form input {
-  flex: 1;
-  min-width: 120px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  color: var(--text-primary);
-}
-
-.settings-form input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
 .link-button {
   background: none;
   border: none;
@@ -442,31 +418,12 @@ img {
   text-decoration: underline;
 }
 
-.custom-app-list {
-  list-style: none;
-  margin: 12px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.custom-app-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--surface-2);
-  border-radius: 8px;
-  padding: 6px 10px;
-}
-
 .tmdb-attribution {
-  margin: 18px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+  margin: 14px 0 0;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 9.5px;
   text-align: center;
+  opacity: 0.7;
 }
 
 .onboarding-select {

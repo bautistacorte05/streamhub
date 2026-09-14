@@ -87,8 +87,9 @@ película/serie (usando la API de TMDB).
    está en streaming por suscripción (`flatrate`) en la región configurada,
    cada una clickeable.
 3. **Ajustes** (modal): país/región, qué plataformas default tenés
-   (checkboxes), API key de TMDB (con link directo a cómo sacarla),
-   agregar/quitar apps custom a la carpeta.
+   (checkboxes). *(Hasta el 2026-09-14 también tenía un campo para cargar
+   una API key de TMDB propia y una sección para agregar/quitar apps
+   custom a la carpeta — sacados los dos, ver puntos 6 y 7.)*
 4. **Multiusuario "cada uno con sus apps" (2026-09-11)**: pedido del
    usuario — poder compartir/distribuir la app a otras personas, cada una
    con su propia config (sin backend, sin cuentas/contraseñas de las
@@ -130,9 +131,18 @@ película/serie (usando la API de TMDB).
      `Config.tmdbApiKey` está vacío. Consecuencias:
      - El wizard y `SearchView` ya no piden ni dependen de una API key —
        la búsqueda funciona de una para cualquiera que instale la app.
-       Cargar una key propia queda como override 100% opcional en
-       Ajustes (dejar el campo vacío y guardar vuelve a usar la
-       embebida).
+     - **Actualización (2026-09-14): se sacó la opción de cargar una key
+       propia.** Pedido explícito del usuario — "tiene que usarse solo
+       con la que genere yo, sino cualquiera se hace dueño de la app".
+       Se sacó la sección de Ajustes donde se pegaba una key de TMDB
+       propia, y `requireApiKey()` en `electron/tmdb.ts` ya ni siquiera
+       lee `Config.tmdbApiKey` — usa `EMBEDDED_TMDB_API_KEY` siempre, sin
+       excepción. El campo `tmdbApiKey` sigue en el tipo `Config` por
+       compatibilidad con instalaciones viejas (no rompe nada, solo ya
+       no se usa). Los mensajes de error de `SearchView.tsx` que decían
+       "revisala en Ajustes" se cambiaron a un genérico ("no está
+       disponible ahora, probá más tarde") porque ya no hay nada que el
+       usuario pueda revisar ahí.
      - Riesgo asumido conscientemente: es una key de cliente, extraíble
        del build (no es un secreto fuerte — común en apps que usan TMDB).
        Si alguna vez se abusa y TMDB la limita/revoca, se corta el
@@ -191,6 +201,23 @@ película/serie (usando la API de TMDB).
      (v0.1.2, la primera que lo incluye) — recién de ahí en adelante las
      próximas versiones se instalan solas. No hay forma de auto-update
      retroactivo para versiones que nunca tuvieron `electron-updater`.
+
+6. **Sin API key propia (2026-09-14)**: se sacó de Ajustes la opción de
+   cargar una API key de TMDB propia — ver detalle en "Key de TMDB
+   embebida" arriba (Decisiones tomadas). Motivo del usuario: que la
+   búsqueda dependa siempre de la cuenta de TMDB que genera StreamHub,
+   no de la que cualquiera cargue a mano.
+
+7. **Sin agregar apps custom por ahora (2026-09-14)**: se sacó de
+   Ajustes la sección para sumar una app/web que no esté en la lista
+   por defecto. Decisión del usuario: en vez de un campo genérico para
+   que cualquiera agregue cualquier cosa, prefiere sumar plataformas
+   puntuales a `DEFAULT_PLATFORMS` (`src/data/platforms.ts`) si empieza
+   a haber demanda real de alguna en particular. `Config.myApps` sigue
+   existiendo (lo siguen usando `PlatformGrid` y el matching de
+   `SearchView`) — instalaciones viejas que ya tenían apps custom
+   cargadas las siguen viendo, solo que ya no hay forma de agregar ni
+   quitar desde la UI.
 
 ## Arquitectura (importante si se retoca)
 
@@ -300,3 +327,36 @@ npm run release  # genera el instalador Y lo publica en GitHub Releases
     assets que necesita electron-updater (`latest.yml`,
     `StreamHub-Setup-0.1.2.exe`, `.exe.blockmap`), link de descarga
     probado con `curl` (200).
+  - **~13:05 a ~14:00** — landing page (`docs/index.html`, espejada en
+    `scratchpad/` + Artifact, sin tocar la app): cambio de copy ("una
+    sola carpeta" → "en un solo lugar", "así se ve tu carpeta" → "así se
+    ve tu app de StreamHub", "Tu carpeta" → "StreamHub" en Features),
+    recorte del paso 02 (se sacó el párrafo que explicaba el aviso de
+    Windows, queda solo el título + la imagen + la acción a hacer), y
+    una animación en el botón de descarga: al clickear, una persona
+    entra caminando por abajo del botón, agarra la flecha (que se
+    desvanece del ícono) y se la lleva — pura animación CSS + un
+    trigger chico en JS, respeta `prefers-reduced-motion`. Primer
+    intento fue una figura de "palitos" geométrica; el usuario mandó una
+    imagen de referencia (ilustración de iStock, persona con cabeza
+    grande y redondeada, cara simple, trazos curvos) y se rehizo la
+    figura para que se pareciera a eso — cabeza grande con cara (ojos +
+    sonrisa + pelito), torso/brazos/piernas curvos, manos y pies
+    ovalados, ícono agrandado de 17px a 21px para que las proporciones
+    se noten.
+  - **~14:05** — pedido explícito del usuario, en mayúsculas: *"NO
+    PUSHEES NUNCA NADA A GITHUB SIN CONSULTARME"* — dicho después de
+    varios pushes ya hechos en la sesión sin problema, así que la regla
+    es "confirmar SIEMPRE antes de cada push", no algo que se dé por
+    aprobado una vez. Guardado en memoria persistente
+    (`confirm-before-git-push.md`) para que aplique en sesiones futuras
+    tambien. Desde ese pedido: los cambios de la figura humana quedaron
+    solo commiteados+pusheados recién cuando el usuario dijo
+    explícitamente "pushealo" (commit `bf1395b`).
+  - **~15:45** — pedido explícito del usuario sobre Ajustes de la app
+    (no la landing): sacar la API key propia de TMDB, sacar "agregar
+    otra app", y achicar (no sacar del todo, para no violar los
+    Términos de Uso de TMDB) la atribución del pie. Ver puntos 6 y 7 de
+    "Features implementadas" para el detalle. Verificado: `npm run
+    build` y `npm run lint` limpios. **Sin pushear** — queda pendiente
+    de confirmación del usuario (ver regla de arriba).

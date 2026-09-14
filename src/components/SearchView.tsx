@@ -113,8 +113,8 @@ export default function SearchView({ myApps, onOpen }: Props) {
 
 function errorMessage(err: unknown): string {
   const msg = err instanceof Error ? err.message : String(err)
-  if (msg.includes('MISSING_API_KEY')) return 'Falta configurar la API key de TMDB en Ajustes.'
-  if (msg.includes('TMDB_HTTP_ERROR_401')) return 'La API key de TMDB no es valida. Revisala en Ajustes.'
+  if (msg.includes('MISSING_API_KEY')) return 'El buscador no esta disponible ahora mismo. Probá mas tarde.'
+  if (msg.includes('TMDB_HTTP_ERROR_401')) return 'El buscador no esta disponible ahora mismo. Probá mas tarde.'
   if (msg.includes('TMDB_HTTP_ERROR')) return 'TMDB no respondio bien. Probá de nuevo en un momento.'
   return 'Algo fallo buscando. Revisa tu conexion a internet.'
 }

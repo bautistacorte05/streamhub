@@ -57,17 +57,18 @@ export interface Providers {
 // solo el mensaje del Error, asi que el codigo va ahi para poder
 // distinguirlo del lado de React (ver src/api.ts).
 //
-// La key propia del usuario (Ajustes) tiene prioridad; si no cargo
-// ninguna, cae a la key embebida en la app (ver embedded-key.ts) para que
-// alguien que instala StreamHub por primera vez pueda buscar sin tener
-// que crearse una cuenta en TMDB.
+// Decision del usuario (2026-09-14): solo se usa la key embebida
+// (embedded-key.ts) -- se saco de Ajustes la opcion de cargar una propia
+// a proposito, para que la busqueda dependa siempre de la cuenta de TMDB
+// que genera StreamHub y no de la que cualquiera pise a mano en
+// config.json. `Config.tmdbApiKey` sigue existiendo en el tipo por
+// compatibilidad con instalaciones viejas, pero ya no se lee aca.
 function requireApiKey(): { apiKey: string; region: string } {
-  const { tmdbApiKey, region } = readConfig()
-  const apiKey = tmdbApiKey || EMBEDDED_TMDB_API_KEY
-  if (!apiKey) {
+  const { region } = readConfig()
+  if (!EMBEDDED_TMDB_API_KEY) {
     throw new Error('MISSING_API_KEY')
   }
-  return { apiKey, region }
+  return { apiKey: EMBEDDED_TMDB_API_KEY, region }
 }
 
 export async function searchTitles(query: string): Promise<SearchResult[]> {
