@@ -259,16 +259,44 @@ npm run release  # genera el instalador Y lo publica en GitHub Releases
   tocar el config real del usuario) para capturar screenshots del wizard
   y de Ajustes — build y lint (`npm run build`, `npm run lint`) pasan
   limpios.
-- **2026-09-14**: reportado por el usuario (captura de pantalla) que
-  clickear "Disney Plus" desde el buscador llevaba a un 404 real de
-  Disney+. Arreglado (ver "Disney+ perdió su ruta pública de búsqueda" en
-  Decisiones tomadas) y publicado como v0.1.1 (release + landing page
-  actualizados). Mismo día, pedido explícito del usuario: "la app tiene
-  que actualizarse, la gente no tiene que volver a descargar la app
-  completa" → se agregó auto-actualización con `electron-updater` (ver
-  punto 5 de "Features implementadas") y se publicó v0.1.2 como el
-  primer release que la trae. Landing page (`docs/index.html`,
-  `scratchpad/download-page.html`, Artifact publicado) actualizada a
-  v0.1.2. Verificado: `npm run build` y `npm run lint` limpios, release
-  v0.1.2 confirmado público (no draft) en GitHub con los 3 assets que
-  necesita electron-updater, link de descarga probado con `curl` (200).
+- **2026-09-14**: sesión larga, en orden:
+  - **~12:31** — reportado por el usuario (captura de pantalla) que
+    clickear "Disney Plus" desde el buscador llevaba a un 404 real de
+    Disney+. Arreglado en `src/data/platforms.ts` (ver "Disney+ perdió
+    su ruta pública de búsqueda" en Decisiones tomadas): ahora cae a la
+    home en vez de a un link roto.
+  - **12:34** — commit `05a70f1` con el fix + bump a v0.1.1. Build
+    (`npm run dist`) y publicado el release v0.1.1 en GitHub con el
+    instalador.
+  - **12:36** — commit `1863c3a`: landing page (`docs/index.html`)
+    actualizada a v0.1.1 (versión + link de descarga). Mismo cambio
+    espejado en `scratchpad/download-page.html` y en el Artifact
+    publicado.
+  - **~12:40** — pedido explícito del usuario: *"la app tiene que
+    actualizarse, la gente no tiene que volver a descargar la app
+    completa"*. Se agregó auto-actualización con `electron-updater` (ver
+    punto 5 de "Features implementadas": banner de reinicio, chequeo
+    automático, `npm run release` reemplazando el build+upload manual).
+  - **12:54** — commit `2a5578e` con todo el código del auto-update +
+    bump a v0.1.2. Publicado el release v0.1.2 (`npm run release`),
+    corregido a mano que no quedara en draft (ver "Auto-actualización"
+    en Decisiones tomadas — el default de electron-builder es dejarlo en
+    draft), landing page actualizada a v0.1.2 en las 3 copias otra vez.
+  - **~13:00** — el usuario pidió el link de "la v0.1.3 con el update de
+    Disney": aclarado que no existe v0.1.3 — el fix de Disney+ es de
+    v0.1.1 y sigue incluido en v0.1.2 (que además ya trae el
+    auto-update), se le pasó el link de v0.1.2. De paso se encontró un
+    release **v0.1.2 duplicado en GitHub** (un draft huérfano, id
+    `388521961`, que quedó de un reintento de `npm run release` que no
+    reusó el draft del primer intento fallido — ver detalle abajo). Es
+    inofensivo (los drafts no los ve nadie ni el auto-update), pero
+    ensucia la lista de releases; intentar borrarlo con `gh release
+    delete`/`gh api DELETE` fue bloqueado por el modo automático de
+    Claude Code (acción destructiva) — **queda pendiente borrarlo a
+    mano** desde github.com/bautistacorte05/streamhub/releases o
+    autorizando esa acción puntual.
+  - Verificado en el camino: `npm run build` y `npm run lint` limpios en
+    cada paso, release v0.1.2 público (no draft) confirmado con los 3
+    assets que necesita electron-updater (`latest.yml`,
+    `StreamHub-Setup-0.1.2.exe`, `.exe.blockmap`), link de descarga
+    probado con `curl` (200).
