@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'node:path'
 import './ipc'
+import { initUpdater } from './updater'
 
 const isDev = !app.isPackaged
 
@@ -24,6 +25,12 @@ function createWindow() {
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
+
+  // Solo tiene sentido buscar actualizaciones en la app empaquetada e
+  // instalada de verdad (electron-updater tira error si falta
+  // app-update.yml, que solo existe en una instalacion real hecha con
+  // electron-builder -- ni en dev ni corriendo `npm start` sin instalar).
+  if (app.isPackaged) initUpdater(win)
 }
 
 app.whenReady().then(createWindow)

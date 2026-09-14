@@ -3,6 +3,7 @@ import OnboardingWizard from './components/OnboardingWizard'
 import PlatformGrid from './components/PlatformGrid'
 import SearchView from './components/SearchView'
 import SettingsModal from './components/SettingsModal'
+import UpdateBanner from './components/UpdateBanner'
 import type { Config } from './types'
 
 type Tab = 'folder' | 'search'
@@ -75,6 +76,8 @@ export default function App() {
           onSaved={setConfig}
         />
       ) : null}
+
+      <UpdateBanner />
     </div>
   )
 }

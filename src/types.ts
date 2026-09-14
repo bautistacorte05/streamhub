@@ -14,6 +14,13 @@ export interface Config {
 
 export type MediaType = 'movie' | 'tv'
 
+export type UpdateStatus =
+  | { state: 'checking' }
+  | { state: 'available'; version: string }
+  | { state: 'not-available' }
+  | { state: 'downloaded'; version: string }
+  | { state: 'error'; message: string }
+
 export interface SearchResult {
   id: number
   mediaType: MediaType
@@ -47,6 +54,11 @@ export interface Api {
   }
   shell: {
     openExternal: (url: string) => Promise<void>
+  }
+  updater: {
+    onStatus: (cb: (status: UpdateStatus) => void) => () => void
+    install: () => Promise<void>
+    check: () => Promise<void>
   }
 }
 

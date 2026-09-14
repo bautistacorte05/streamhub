@@ -1,7 +1,7 @@
 {
   "name": "streamhub",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Carpeta unica para todas tus apps de streaming + buscador de en que plataforma esta cada titulo",
   "author": "bauti",
   "main": "dist-electron/main.js",
@@ -11,12 +11,14 @@
     "dev": "npm run prepare:electron && concurrently -k -n VITE,TSC,ELECTRON \"vite\" \"tsc -p tsconfig.electron.json --watch --preserveWatchOutput\" \"wait-on tcp:5174 dist-electron/main.js && cross-env VITE_DEV_SERVER_URL=http://localhost:5174 electron .\"",
     "build": "tsc -b && npm run prepare:electron && vite build",
     "dist": "npm run build && electron-builder",
+    "release": "npm run build && electron-builder --publish always",
     "start": "electron .",
     "preview:fresh": "npm run build && node scripts/preview-fresh.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -46,6 +48,12 @@
     },
     "directories": {
       "output": "release"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "bautistacorte05",
+      "repo": "streamhub",
+      "draft": false
     }
   }
 }

@@ -160,6 +160,38 @@ película/serie (usando la API de TMDB).
    recurrente, eso es un cambio de arquitectura más grande (backend +
    auth) que no se arrancó — ver "Cosas pendientes".
 
+5. **Auto-actualización (2026-09-14)**: pedido explícito del usuario —
+   que la gente no tenga que volver a descargar el instalador entero a
+   mano cada vez que hay un fix. Se agregó `electron-updater`
+   (`electron/updater.ts`), apuntando al feed de GitHub Releases del
+   repo (`build.publish` en `package.json`, provider `github`).
+   - Descarga en segundo plano sola (`autoDownload = true`) apenas hay
+     un release nuevo publicado (chequea al arrancar y despues cada 4hs
+     mientras la app sigue abierta); nunca interrumpe de golpe — se
+     instala cuando el usuario toca "Reiniciar ahora" en el aviso que
+     aparece abajo de la pantalla (`src/components/UpdateBanner.tsx`) o,
+     si nunca lo toca, sola al cerrar la app (`autoInstallOnAppQuit`).
+   - Solo se activa si `app.isPackaged` (instalación real) — en `npm run
+     dev` o `npm start` sin instalar no hay `app-update.yml`, tirarle
+     autoUpdater ahí da error porque no hay feed que consultar.
+   - **Publicar un release ya NO es "generar el .exe y subirlo a mano
+     con `gh release upload`"** — eso deja afuera el `latest.yml` que
+     necesita electron-updater para saber si hay version nueva, y con
+     nombres de archivo que no siempre coinciden con lo que
+     electron-updater espera. Ahora es `npm run release`
+     (`electron-builder --publish always`, con `GH_TOKEN` en el
+     entorno), que sube instalador + `.blockmap` + `latest.yml` con los
+     nombres exactos. `build.publish.draft` está en `false` a propósito
+     — el default de electron-builder es crear el release como **draft**
+     (invisible para el chequeo de updates y para la landing page) y hay
+     que acordarse de publicarlo a mano si eso vuelve a pasar
+     (`gh release edit vX.Y.Z --draft=false`).
+   - **Límite real de esta primera versión**: quien ya tenía v0.1.1 (sin
+     este código) tuvo que bajar el instalador una vez más a mano
+     (v0.1.2, la primera que lo incluye) — recién de ahí en adelante las
+     próximas versiones se instalan solas. No hay forma de auto-update
+     retroactivo para versiones que nunca tuvieron `electron-updater`.
+
 ## Arquitectura (importante si se retoca)
 
 Mismo patrón que `gastos-mensuales`:
@@ -186,7 +218,12 @@ npm install
 npm run dev      # desarrollo con hot-reload (vite + tsc watch + electron)
 npm run build    # compila todo (renderer + proceso electron)
 npm start        # corre la app ya compilada
-npm run dist     # genera el instalador .exe (electron-builder) en /release
+npm run dist     # genera el instalador .exe (electron-builder) en /release, sin publicar
+npm run release  # genera el instalador Y lo publica en GitHub Releases
+                 # (instalador + .blockmap + latest.yml) -- necesita
+                 # GH_TOKEN en el entorno con permiso de escritura en el
+                 # repo. Es lo que hace que el auto-update (ver punto 5
+                 # de "Features implementadas") vea la version nueva.
 ```
 
 ## Cosas pendientes / ideas ofrecidas (no confirmadas por el usuario)
@@ -225,7 +262,13 @@ npm run dist     # genera el instalador .exe (electron-builder) en /release
 - **2026-09-14**: reportado por el usuario (captura de pantalla) que
   clickear "Disney Plus" desde el buscador llevaba a un 404 real de
   Disney+. Arreglado (ver "Disney+ perdió su ruta pública de búsqueda" en
-  Decisiones tomadas). Pendiente: sacar un release nuevo (`npm run dist`)
-  y actualizar el link/versión en la landing page (`docs/index.html`,
-  `scratchpad/download-page.html`, Artifact publicado) — quien ya se
-  instaló la v0.1.0 sigue con el bug hasta que actualice.
+  Decisiones tomadas) y publicado como v0.1.1 (release + landing page
+  actualizados). Mismo día, pedido explícito del usuario: "la app tiene
+  que actualizarse, la gente no tiene que volver a descargar la app
+  completa" → se agregó auto-actualización con `electron-updater` (ver
+  punto 5 de "Features implementadas") y se publicó v0.1.2 como el
+  primer release que la trae. Landing page (`docs/index.html`,
+  `scratchpad/download-page.html`, Artifact publicado) actualizada a
+  v0.1.2. Verificado: `npm run build` y `npm run lint` limpios, release
+  v0.1.2 confirmado público (no draft) en GitHub con los 3 assets que
+  necesita electron-updater, link de descarga probado con `curl` (200).
