@@ -405,9 +405,58 @@ npm run release  # genera el instalador Y lo publica en GitHub Releases
     v0.1.2 ya publicada (que es la que trae el codigo de
     electron-updater) — se bumpeo a **v0.1.3** (settings sin API key
     propia ni agregar apps, fix del bug de "en Argentina" hardcodeado,
-    dedupe de tipos) y se publico con `npm run release`. El build viejo
-    sin instalar en `release/win-unpacked/` (de cuando se publico
-    v0.1.2, intacto desde entonces) se uso como "usuario que ya tenia
-    v0.1.2" para probar que detecta y baja la v0.1.3 sola. Resultado de
-    la prueba: ver mas abajo en esta misma entrada — se completa
-    despues de correrla.
+    dedupe de tipos).
+  - **~16:10** — al intentar publicar con `npm run release`,
+    `electron-builder` 26.15.3 rechazo la config `build.publish` como
+    objeto suelto con `draft: false`
+    (`configuration.publish should be one of these: array | null |
+    string`, con un monton de ruido de "provider must be equal to
+    constant" — error de schema, no de JSON invalido). Se probo
+    envolverlo en array (mismo error) y finalmente sacando `draft:
+    false` del todo (volviendo a la forma exacta que ya habia andado
+    para v0.1.1/v0.1.2, sin ese campo) funciono. **Ojo si se vuelve a
+    tocar `build.publish` en `package.json`:** la forma que funciona con
+    esta version de electron-builder es
+    `{ "provider": "github", "owner": "...", "repo": "..." }` **sin**
+    `draft` — el release sale como draft por default y hay que
+    publicarlo a mano despues (`gh release edit vX.Y.Z --draft=false`),
+    no se pudo automatizar con `draft: false` en el config.
+  - Mientras se investigaba eso, un comando de diagnostico
+    (`electron-builder --publish never -c.publish=null`, para ver si el
+    problema era el config) corrio un build real por accidente y piso
+    `release/win-unpacked/` (que iba a usarse como "la v0.1.2 vieja" para
+    la prueba) con un empaquetado parcial de v0.1.3. Sin consecuencia real
+    (nada de eso se sube a ningun lado), pero perdio esa copia de
+    referencia.
+  - **~16:20** — publicar con `npm run release` (Bash) fue bloqueado por
+    el modo automatico de Claude Code ("Create Public Surface" — crear
+    contenido publico) a pesar de que la misma accion ya se habia hecho
+    sin problema antes en la sesion. Se le paso el comando al usuario
+    para que lo corriera el mismo en su propia terminal.
+  - **~16:30** — el usuario confirmo "Listo". Se verifico el release
+    v0.1.3 en GitHub: publicado, no draft, `latest.yml` apuntando bien
+    al `.exe` con el sha512/size correctos. **Falta el `.exe.blockmap`**
+    en este release (electron-updater cae a descarga completa en vez de
+    diferencial — no rompe nada, solo es menos eficiente; no se investigo
+    por que no se genero esta vez).
+  - **Prueba real, en la maquina del usuario** (no un profile aislado):
+    encontrada la instalacion real de StreamHub del usuario
+    (`%LOCALAPPDATA%\Programs\streamhub`, v0.1.2, con su config real —
+    region AR, 3 plataformas deshabilitadas). Estaba corriendo; se cerro
+    (`taskkill`) y se reabrio para forzar el chequeo de arranque (a los
+    5s). Captura de pantalla ~8s despues: **el banner de actualizacion ya
+    aparecia solo**, "Hay una actualización lista (v0.1.3) — reiniciá
+    para instalarla." con el boton "Reiniciar ahora" — bajo los 112MB en
+    ese lapso. No se le dio click al boton (para no tocar mas la pantalla
+    real del usuario, que tenia otras ventanas abiertas) — quedo a mano
+    del usuario reiniciar cuando quisiera.
+  - **2026-09-15**: el usuario confirmo "el auto-update funciona
+    correctamente" (click a "Reiniciar ahora" hecho de su lado, en algun
+    momento entre el fin de la sesion anterior y este mensaje).
+    **Auto-update verificado end-to-end en produccion**, no solo en
+    teoria. De paso se encontro que el commit `c271f87` (ya pusheado)
+    tenia la config de `publish` rota (`draft: false`, ver arriba) — lo
+    que realmente funciono para publicar v0.1.3 fue una correccion que
+    habia quedado *solo local* sin commitear. Corregido y pusheado
+    aparte para que el repo en GitHub refleje la config que de verdad
+    funciona.

@@ -52,8 +52,7 @@
     "publish": {
       "provider": "github",
       "owner": "bautistacorte05",
-      "repo": "streamhub",
-      "draft": false
+      "repo": "streamhub"
     }
   }
 }
